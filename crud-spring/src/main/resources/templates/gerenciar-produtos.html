@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gerenciar Produtos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciar Produtos</h1>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Produto</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <th:block th:each="prd : ${produtos}">
+                    <tr>
+                        <td th:text="${prd.getId()}">...</td>
+                        <td th:text="${prd.getNome()}">...</td>
+                        <td th:if="${prd.getDisponivel()}" style="color:green">Disponível</td>
+                        <td th:if="${!prd.getDisponivel()}" style="color:red">Indisponível</td>
+                        <td>
+                            <a th:href="@{'/editar/' + ${prd.getId()}}" class="btn btn-primary" role="button">Editar</a>
+                            <a th:href="@{'/remover/' + ${prd.getId()}}" class="remover btn btn-secondary" role="button">Remover</a>
+                        </td>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table>
+        <a class="btn btn-lg btn-primary" href="./cadastrar" role="button">Adicionar Novo</a>
+    </div>
+    <script>
+        $('.remover').on('click', function (e) {
+            e.preventDefault();
+            if (!confirm('Deseja remover o produto "'+ $(this).parent().parent().find('td')[1].textContent +'"'))
+                return;
+
+            $.ajax({
+                type: "POST",
+                url: $(this)[0].href,
+                success: (data)=> {
+                    $(this).parent().parent().remove();
+                },
+                error: (data)=> {
+                    alert('Erro ao cadastrar o produto, tente novamente mais tarde.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
